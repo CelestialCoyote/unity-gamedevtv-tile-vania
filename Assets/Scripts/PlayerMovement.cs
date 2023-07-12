@@ -7,15 +7,18 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float runSpeed = 7.0f;
+    [SerializeField] float jumpSpeed = 5.0f;
 
     Animator playerAnimator;
+    CapsuleCollider2D playerCapsuleCollider;
     Rigidbody2D playerRigidbody;
     Vector2 moveInput;
 
     void Start()
     {
-        playerRigidbody = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponent<Animator>();
+        playerCapsuleCollider = GetComponent<CapsuleCollider2D>();
+        playerRigidbody = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -27,6 +30,19 @@ public class PlayerMovement : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+    }
+
+    void OnJump(InputValue value)
+    {
+        if (!playerCapsuleCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
+        {
+            return;
+        }
+
+        if (value.isPressed)
+        {
+            playerRigidbody.velocity += new Vector2(0.0f, jumpSpeed);
+        }
     }
 
     void Run()
